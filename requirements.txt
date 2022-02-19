@@ -7,3 +7,5 @@ scipy
 matplotlib
 numpy
 opencv-python
+pyaudio~=0.2.11
+websockets~=10.1
