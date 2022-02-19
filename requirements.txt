@@ -1,6 +1,7 @@
 tensorflow
 tensorflow-gpu
 mediapipe
+pandas
 keras
 scipy
 matplotlib
