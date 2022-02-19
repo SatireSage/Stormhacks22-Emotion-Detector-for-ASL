@@ -1,4 +1,6 @@
 tensorflow
+tensorflow-gpu
+mediapipe
 keras
 scipy
 matplotlib
