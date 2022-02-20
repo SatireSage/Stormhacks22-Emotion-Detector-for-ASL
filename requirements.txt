@@ -13,3 +13,4 @@ websockets~=10.1
 sklearn
 pyautogui
 websockets
+pyttsx3
