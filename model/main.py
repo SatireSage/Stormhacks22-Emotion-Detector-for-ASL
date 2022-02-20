@@ -15,7 +15,7 @@ import numpy as np
 
 # setting variables and directories for training and testing paths
 img_size = 224
-batch_size = 32
+batch_size = 10000
 epochs = 5
 train_path = "/archive/asl_alphabet_train/asl_alphabet_train"
 test_path = "/archive/asl_alphabet_test/asl_alphabet_test"

@@ -10,7 +10,7 @@ from mtcnn.mtcnn import MTCNN
 from cvzone.HandTrackingModule import HandDetector
 import time
 
-trained_model = models.load_model("../trained_models/trained_vggface.h5", compile=False)
+trained_model = models.load_model("trained_vggface.h5", compile=False)
 trained_model.summary()
 cv2.ocl.setUseOpenCL(False)
 pTime = 0
@@ -23,10 +23,8 @@ emotion_dict = {
     5: "Surprise",
     6: "Neutral",
 }
-detector = MTCNN()
 
 cap = cv2.VideoCapture(0)
-detector = HandDetector(detectionCon=0.8, maxHands=2)
 black = np.zeros((96, 96))
 
 # Set mediapipe model
@@ -37,6 +35,8 @@ with mp_holistic.Holistic(
 
         # Read feed
         ret, frame = cap.read()
+        if not ret:
+            break
 
         # Make detections
         image, results = mediapipe_detection(frame, holistic)
@@ -45,6 +45,7 @@ with mp_holistic.Holistic(
         # Draw landmarks
         draw_styled_landmarks(image, results)
 
+        detector = HandDetector(detectionCon=0.8, maxHands=2)
         hands, image = detector.findHands(image)
 
         if hands:
@@ -65,16 +66,15 @@ with mp_holistic.Holistic(
                     centerPoint1, centerPoint2, image
                 )
 
-        if not ret:
-            break
-        results = detector.detect_faces(frame)
-        if len(results) == 1:
+        detector = MTCNN()
+        new_results = detector.detect_faces(frame)
+        if len(new_results) == 1:
             try:
-                x1, y1, width, height = results[0]["box"]
+                x1, y1, width, height = new_results[0]["box"]
                 x2, y2 = x1 + width, y1 + height
                 face = frame[y1:y2, x1:x2]
                 cv2.rectangle(
-                    frame, (x1, y1), (x1 + width, y1 + height), (255, 0, 0), 2
+                    image, (x1, y1), (x1 + width, y1 + height), (255, 0, 0), 2
                 )
                 cropped_img = cv2.resize(face, (96, 96))
                 cropped_img_expanded = np.expand_dims(cropped_img, axis=0)
@@ -83,7 +83,7 @@ with mp_holistic.Holistic(
                 print(prediction)
                 maxindex = int(np.argmax(prediction))
                 cv2.putText(
-                    frame,
+                    image,
                     emotion_dict[maxindex],
                     (x1 + 20, y1 - 60),
                     cv2.FONT_HERSHEY_SIMPLEX,
@@ -110,7 +110,11 @@ with mp_holistic.Holistic(
         )
 
         # Show to screen
-        cv2.imshow("OpenCV Feed", image)
+        try:
+
+            cv2.imshow("OpenCV Feed", image)
+        except:
+            cv2.imshow("OpenCV Feed", black)
 
         # Break gracefully
         if cv2.waitKey(10) & 0xFF == ord("q"):
