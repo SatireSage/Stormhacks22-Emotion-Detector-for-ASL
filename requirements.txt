@@ -7,6 +7,9 @@ scipy
 matplotlib
 numpy
 opencv-python
+cvzone
 pyaudio~=0.2.11
 websockets~=10.1
 sklearn
+pyautogui
+websockets

@@ -1,55 +1,22 @@
-import mediapipe as mp
-import cv2
+from wsgiref.handlers import format_date_time
+from matplotlib.pyplot import contour
+from draw_detect import *
 from extract_mp_keypoints import extract_keypoints
+import math
+import numpy as np
+import pyautogui
+from cvzone.HandTrackingModule import HandDetector
+import time
 
-mp_holistic = mp.solutions.holistic  # Holistic model
-mp_drawing = mp.solutions.drawing_utils  # Drawing utilities
-
-
-def mediapipe_detection(image, model):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)  # COLOR CONVERSION BGR 2 RGB
-    image.flags.writeable = False  # Image is no longer writeable
-    results = model.process(image)  # Make prediction
-    image.flags.writeable = True  # Image is now writeable
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # COLOR CONVERSION RGB 2 BGR
-    return image, results
-
-
-def draw_landmarks(image, results):
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION)  # Draw face connections
-    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS)  # Draw pose connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks,
-                              mp_holistic.HAND_CONNECTIONS)  # Draw left-hand connections
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks,
-                              mp_holistic.HAND_CONNECTIONS)  # Draw right-hand connections
-
-
-def draw_styled_landmarks(image, results):
-    # Draw face connections
-    mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION,
-                              mp_drawing.DrawingSpec(color=(80, 110, 10), thickness=1, circle_radius=1),
-                              mp_drawing.DrawingSpec(color=(80, 256, 121), thickness=1, circle_radius=1)
-                              )
-    # Draw pose connections
-    mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(80, 22, 10), thickness=2, circle_radius=4),
-                              mp_drawing.DrawingSpec(color=(80, 44, 121), thickness=2, circle_radius=2)
-                              )
-    # Draw left-hand connections
-    mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
-                              mp_drawing.DrawingSpec(color=(121, 44, 250), thickness=2, circle_radius=2)
-                              )
-    # Draw right-hand connections
-    mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
-                              mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=4),
-                              mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-                              )
-
+pTime = 0
 
 cap = cv2.VideoCapture(0)
+detector = HandDetector(detectionCon=0.8, maxHands=2)
+
 # Set mediapipe model
-with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+with mp_holistic.Holistic(
+    min_detection_confidence=0.5, min_tracking_confidence=0.5
+) as holistic:
     while cap.isOpened():
 
         # Read feed
@@ -62,13 +29,45 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         # Draw landmarks
         draw_styled_landmarks(image, results)
 
+        hands, image = detector.findHands(image)
+
+        if hands:
+            hand1 = hands[0]
+            lmList1 = hand1["lmList"]
+            bbox1 = hand1["bbox"]
+            centerPoint1 = hand1["center"]
+            handType1 = hand1["type"]
+            fingers1 = detector.fingersUp(hand1)
+            if len(hands) == 2:
+                hand2 = hands[1]
+                lmList2 = hand2["lmList"]
+                bbox2 = hand2["bbox"]
+                centerPoint2 = hand2["center"]
+                handType2 = hand2["type"]
+                fingers2 = detector.fingersUp(hand2)
+                length, info, image = detector.findDistance(
+                    centerPoint1, centerPoint2, image
+                )
+
+        # print fps
+        cTime = time.time()
+        fps = 1 / (cTime - pTime)
+        pTime = cTime
+        cv2.putText(
+            image,
+            "Current FPS: " + str(int(fps)),
+            (10, 30),
+            cv2.FONT_HERSHEY_PLAIN,
+            1,
+            (0, 0, 255),
+            2,
+        )
+
         # Show to screen
-        cv2.imshow('OpenCV Feed', image)
+        cv2.imshow("OpenCV Feed", image)
 
         # Break gracefully
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord("q"):
             break
     cap.release()
     cv2.destroyAllWindows()
-
-
