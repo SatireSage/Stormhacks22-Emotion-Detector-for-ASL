@@ -6,11 +6,14 @@ from tensorflow.python.keras import models
 import cv2
 import numpy as np
 from mtcnn.mtcnn import MTCNN
+import os
 
 from cvzone.HandTrackingModule import HandDetector
 import time
+from time import process_time
 
-trained_model = models.load_model("trained_vggface.h5", compile=False)
+os.environ["CUDA_PATH"] = "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.0"
+trained_model = models.load_model("feed/trained_vggface.h5", compile=False)
 trained_model.summary()
 cv2.ocl.setUseOpenCL(False)
 pTime = 0
@@ -27,6 +30,8 @@ emotion_dict = {
 cap = cv2.VideoCapture(0)
 black = np.zeros((96, 96))
 
+prediction = "Please wait..."
+
 # Set mediapipe model
 with mp_holistic.Holistic(
     min_detection_confidence=0.5, min_tracking_confidence=0.5
@@ -40,7 +45,6 @@ with mp_holistic.Holistic(
 
         # Make detections
         image, results = mediapipe_detection(frame, holistic)
-        print(extract_keypoints(results))
 
         # Draw landmarks
         draw_styled_landmarks(image, results)
@@ -79,8 +83,9 @@ with mp_holistic.Holistic(
                 cropped_img = cv2.resize(face, (96, 96))
                 cropped_img_expanded = np.expand_dims(cropped_img, axis=0)
                 cropped_img_float = cropped_img_expanded.astype(float)
+                proccess_time = process_time() % 10
+                #   if proccess_time == 0:
                 prediction = trained_model.predict(cropped_img_float)
-                print(prediction)
                 maxindex = int(np.argmax(prediction))
                 cv2.putText(
                     image,
