@@ -50,6 +50,7 @@ def draw_styled_landmarks(image, results):
         mp_drawing.DrawingSpec(color=(80, 22, 10), thickness=2, circle_radius=4),
         mp_drawing.DrawingSpec(color=(80, 44, 121), thickness=2, circle_radius=2),
     )
+
     """
     # Draw left-hand connections
     mp_drawing.draw_landmarks(

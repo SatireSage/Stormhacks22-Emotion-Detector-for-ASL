@@ -134,3 +134,8 @@ comp_vision/
 model/*
 !model/*
 model/archive/
+model/__pycache__/
+
+!feed/
+feed/ASLModel.h5
+feed/trained_vggface.h5
