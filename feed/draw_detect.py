@@ -1,5 +1,7 @@
 import cv2
 import mediapipe as mp
+import math
+import pyautogui
 
 mp_holistic = mp.solutions.holistic  # Holistic model
 mp_drawing = mp.solutions.drawing_utils  # Drawing utilities

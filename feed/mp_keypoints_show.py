@@ -2,9 +2,8 @@ from wsgiref.handlers import format_date_time
 from matplotlib.pyplot import contour
 from draw_detect import *
 from extract_mp_keypoints import extract_keypoints
-import math
 import numpy as np
-import pyautogui
+
 from cvzone.HandTrackingModule import HandDetector
 import time
 

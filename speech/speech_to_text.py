@@ -4,6 +4,7 @@ from websockets.exceptions import ConnectionClosedError
 import asyncio
 import base64
 import json
+
 # from configure import auth_key
 
 FRAMES_PER_BUFFER = 3200
@@ -18,18 +19,18 @@ stream = p.open(
     channels=CHANNELS,
     rate=RATE,
     input=True,
-    frames_per_buffer=FRAMES_PER_BUFFER
+    frames_per_buffer=FRAMES_PER_BUFFER,
 )
 URL = "wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000"
 
 
 async def send_receive():
-    print(f'Connecting websocket to url ${URL}')
+    print(f"Connecting websocket to url ${URL}")
     async with websockets.connect(
-            URL,
-            extra_headers=(("Authorization", '8075478ee6144520993b08d75b7cae5b'),),
-            ping_interval=5,
-            ping_timeout=20
+        URL,
+        extra_headers=(("Authorization", "8075478ee6144520993b08d75b7cae5b"),),
+        ping_interval=5,
+        ping_timeout=20,
     ) as _ws:
         await asyncio.sleep(0.1)
         print("Receiving SessionBegins ...")
@@ -58,7 +59,7 @@ async def send_receive():
             while True:
                 try:
                     result_str = await _ws.recv()
-                    print(json.loads(result_str)['text'])
+                    print(json.loads(result_str)["text"])
                 except ConnectionClosedError as e:
                     print(e)
                     assert e.code == 4008
@@ -67,5 +68,6 @@ async def send_receive():
                     assert False, "Not a websocket 4008 error"
 
         send_result, receive_result = await asyncio.gather(send(), receive())
+
 
 asyncio.run(send_receive())

@@ -1,5 +1,6 @@
 tensorflow
 tensorflow-gpu
+tensorflow_hub
 mediapipe
 pandas
 keras

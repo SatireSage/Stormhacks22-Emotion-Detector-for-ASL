@@ -130,3 +130,7 @@ dmypy.json
 
 comp_vision/
 .vscode/
+!model/
+model/*
+!model/*
+model/archive/
