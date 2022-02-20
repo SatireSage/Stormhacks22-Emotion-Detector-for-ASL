@@ -9,11 +9,9 @@ from tensorflow.python.keras.layers import (
     Dropout,
 )
 from tensorflow.python.keras.losses import sparse_categorical_crossentropy
-from tensorflow.python.keras.optimizers import Adam
 from keras.preprocessing.image import ImageDataGenerator
 import tensorflow_hub as hub
 import numpy as np
-import matplotlib.pyplot as plt
 
 # setting variables and directories for training and testing paths
 img_size = 224
@@ -105,28 +103,20 @@ test_dataset = augment_train_data.flow_from_directory(
     target_size=(img_size, img_size),
     batch_size=batch_size,
 )
-# showing 8 images from training dataset
-fig = plt.figure(figsize=(15, 10))
-for i in range(1, 9):
-    plt.subplot(4, 2, i)
-    plt.imshow(train_dataset[0][0][i - 1])
-plt.show()
 # getting pretrained model for transfer learning and defining model
 url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/4"
 download_model = hub.KerasLayer(url, input_shape=(img_size, img_size, 3))
 model = Sequential([download_model, Dense(29), Activation("softmax")])
 # compiling model
-model.compile(
-    optimizer=Adam(1e-3), loss="categorical_crossentropy", metrics=["accuracy"]
-)
+model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 # training model
-print("\n Model summary: ")
-print(model.summary())
 print("\n Model Training: ")
 model.fit(train_dataset, batch_size=batch_size, epochs=epochs)
+print("\n Model summary: ")
+print(model.summary())
 print("\n Model Evaluation: ")
 model.evaluate(test_dataset)
-model.save("/content/drive/My Drive/ASL-recognition/h5/asl_model.h5")
+model.save("/archive/asl_model.h5")
 load_model = tf.keras.models.load_model(
     "/asl_model.h5",
     custom_objects={"KerasLayer": hub.KerasLayer},

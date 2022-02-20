@@ -15,3 +15,6 @@ sklearn
 pyautogui
 websockets
 pyttsx3
+mtcnn
+keras-vggface
+imageio
