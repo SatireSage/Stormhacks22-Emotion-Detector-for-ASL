@@ -1,8 +1,9 @@
-# Stormhacks22: Emotion Detector for ASL
+# Emotion Detector for ASL
 
 Authors: [Sahaj Singh](https://github.com/SatireSage), [Rohan Karan](https://github.com/RohanKaran), [Nicolas Ramirez](https://github.com/Pikanick), [Boris Perdija](https://github.com/bperdija)
 
-This project was created during the 2022 Stormhacks hackathon by Sahaj Singh, Rohan Karan, Nicolas Ramirez, and Boris Perdija.
+Check out the project demonstration on YouTube:
+[![Emotion and Hand Detector](https://github.com/SatireSage/Stormhacks22-Emotion-Detector-for-ASL/assets/49692422/89af1bb1-31fe-45a5-a642-7156c50b6042)](https://www.youtube.com/watch?v=E5jAKVbiboY "Emotion and Hand Detector")
 
 ## Inspiration
 
@@ -47,11 +48,6 @@ To run this program:
 
 - Machine Learning
 - Python
-
-## Media
-
-Check out our project demonstration on YouTube:
-[<img src="https://i.ytimg.com/vi/Hc79sDi3f0U/maxresdefault.jpg" width="50%">]([https://www.youtube.com/watch?v=Hc79sDi3f0U](https://www.youtube.com/watch?v=E5jAKVbiboY) "Emotion and Hand Detector")
 
 ## More Information
 
